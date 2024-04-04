@@ -13,20 +13,30 @@ image:
 
 cpu: 256       # Number of CPU units for the task.
 memory: 512    # Amount of memory in MiB used by the task.
-count: 1       # Number of tasks that should be running in your service.
+platform: linux/x86_64  # See https://aws.github.io/copilot-cli/docs/manifest/worker-service/#platform
+# count: 1       # Number of tasks that should be running in your service.
+
+# Uncomment for autoscaling exercise.
+count:
+  range:
+    min: 1
+    max: 5
+  queue_delay:
+    acceptable_latency: 10s
+    msg_processing_time: 1s
+
 exec: true     # Enable running commands in your container.
 
 # storage:
   # readonly_fs: true       # Limit to read-only access to mounted root filesystems.
 
 
-# You can register to topics from other services.
 # The events can be received from an SQS queue via the env var $COPILOT_QUEUE_URI.
-# subscribe:
-#   topics: 
-#     - name: topic-from-another-service
-#       service: another-service
-
+subscribe:
+  topics:
+    - name: requestsTopic
+      service: api
+  
 # Optional fields for more advanced use-cases.
 #
 #variables:                    # Pass environment variables as key value pairs.
